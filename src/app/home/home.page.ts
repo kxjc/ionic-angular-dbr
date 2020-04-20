@@ -77,7 +77,7 @@ export class HomePage {
                 .toString()
                 .split(",")
                 .join("\n"),
-            duration: 2000
+            duration: 3000
         });
         toast.present();
         toast.onDidDismiss().then(() => {
