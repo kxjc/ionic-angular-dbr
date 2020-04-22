@@ -12,18 +12,22 @@
       <ion-title size="small">Dynamsoft Barcode Reader</ion-title>
     </ion-toolbar>
   </ion-header>
-  <div class='selection'>
-    <ion-button class='btn' (click)="readBarcodeFromVideo()">Read Barcode From Video</ion-button>
+  <div class='selection' *ngIf="this.scanner">
+    <input *ngIf="this.scanner.singleFrameMode" type="file" id="fileIn" hidden accept="image/png, image/jpeg, image/gif"
+      (change)="readBarcodeFromImage($event.target.files[0])" />
+    <ion-button (click)="this.scanner.singleFrameMode ? null : readBarcodeFromVideo()"> <label class='btn' for="fileIn">
+        Read Barcode From Video </label>
+    </ion-button>
     <input type="file" id="fileInput" hidden accept="image/png, image/jpeg, image/gif"
       (change)="readBarcodeFromImage($event.target.files[0])" />
-    <ion-button><label class='btn' for="fileInput">Read Barcode From Image</label></ion-button>
-
-    <div class='results'>
-      <ion-list >
-        <ion-item *ngFor="let result of barcodeResults">
-          {{result.barcodeText}}
-        </ion-item>
-      </ion-list>
-    </div>
+    <ion-button> <label class='btn' for="fileInput"> Read Barcode From Image </label>
+    </ion-button>
+  </div>
+  <div class='results'>
+    <ion-list>
+      <ion-item *ngFor="let result of barcodeResults">
+        {{result.barcodeText}}
+      </ion-item>
+    </ion-list>
   </div>
 </ion-content>

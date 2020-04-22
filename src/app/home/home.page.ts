@@ -19,33 +19,34 @@ export class HomePage {
     public barcodeResults: any = [];
 
     constructor(platform: Platform, public toastController: ToastController) {
-        this.platform = platform;
+        this.platform = platform; 
+        this.initializeDBR();
     }
 
     reader = null;
     scanner = null;
 
+    async initializeDBR() {
+        this.reader = this.reader || (await Dynamsoft.BarcodeReader.createInstance()); 
+        this.scanner = this.scanner || (await Dynamsoft.BarcodeScanner.createInstance()); 
+        // this.scanner.singleFrameMode = true;
+    }
+
     async readBarcodeFromImage(file) {
         try {
             this.barcodeResults = [];
-            this.reader = this.reader || (await Dynamsoft.BarcodeReader.createInstance());
             let results = await this.reader.decode(file);
-            console.log(results.length)
             if(results.length){
                 this.barcodeResults = results;
             } else {
                 this.barcodeResults.push({barcodeText: "No barcodes found."})
             }
-
         } catch (ex) {
             alert(ex);
         }
     }
     async readBarcodeFromVideo() {
         try {
-            this.scanner =
-                this.scanner ||
-                (await Dynamsoft.BarcodeScanner.createInstance());
             let scanSettings = await this.scanner.getScanSettings();
             // disregard duplicated results found in a specified time period
             scanSettings.duplicateForgetTime = 1000;
