@@ -15,6 +15,7 @@ import { timingSafeEqual } from "crypto";
 })
 export class HomePage {
     private platform: Platform;
+    public isScanning: boolean = false;
     public barcodeResults: any = [];
     public videoResults: any = [];
 
@@ -30,11 +31,13 @@ export class HomePage {
         this.reader = this.reader || (await Dynamsoft.BarcodeReader.createInstance()); 
         this.scanner = this.scanner || (await Dynamsoft.BarcodeScanner.createInstance()); 
         // this.scanner.singleFrameMode = true;
+        this.scanner.setUIElement(document.getElementById('scanner'))
     }
 
     async readBarcodeFromImage(file) {
         try {
-            this.barcodeResults = [];
+            this.barcodeResults = []; 
+            this.videoResults = [];
             let results = await this.reader.decode(file);
             if(results.length){
                 this.barcodeResults = results;
@@ -47,7 +50,9 @@ export class HomePage {
     }
     async readBarcodeFromVideo() {
         try {
-            this.videoResults = [];
+            this.isScanning = true;
+            this.videoResults = []; 
+            this.barcodeResults = [];
             let scanSettings = await this.scanner.getScanSettings();
             // disregard duplicated results found in a specified time period
             scanSettings.duplicateForgetTime = 1000;
@@ -60,9 +65,6 @@ export class HomePage {
             };
 
             await this.scanner.show();
-            document.getElementsByClassName(
-                "dbrScanner-cvs-scanarea"
-            )[0].parentElement.style.height = "80%";
         } catch (ex) {
             alert(ex);
         }
