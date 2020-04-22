@@ -3,7 +3,7 @@ import {
     ɵCompiler_compileModuleSync__POST_R3__
 } from "@angular/core";
 import { Plugins, CameraResultType, CameraSource } from "@capacitor/core";
-import { Platform, ToastController } from "@ionic/angular";
+import { Platform } from "@ionic/angular";
 
 import Dynamsoft from "dynamsoft-javascript-barcode";
 import { timingSafeEqual } from "crypto";
@@ -15,10 +15,10 @@ import { timingSafeEqual } from "crypto";
 })
 export class HomePage {
     private platform: Platform;
-    public toastMsgs: any = [];
     public barcodeResults: any = [];
+    public videoResults: any = [];
 
-    constructor(platform: Platform, public toastController: ToastController) {
+    constructor(platform: Platform) {
         this.platform = platform; 
         this.initializeDBR();
     }
@@ -47,6 +47,7 @@ export class HomePage {
     }
     async readBarcodeFromVideo() {
         try {
+            this.videoResults = [];
             let scanSettings = await this.scanner.getScanSettings();
             // disregard duplicated results found in a specified time period
             scanSettings.duplicateForgetTime = 1000;
@@ -55,30 +56,15 @@ export class HomePage {
             await this.scanner.updateScanSettings(scanSettings);
 
             this.scanner.onUnduplicatedRead = (txt, result) => {
-                this.sendToast(txt);
+                this.videoResults.push(txt);
             };
 
             await this.scanner.show();
             document.getElementsByClassName(
                 "dbrScanner-cvs-scanarea"
-            )[0].parentElement.style.height = "90%";
+            )[0].parentElement.style.height = "80%";
         } catch (ex) {
             alert(ex);
         }
-    }
-
-    async sendToast(barcodeText) {
-        this.toastMsgs.push(barcodeText);
-        const toast = await this.toastController.create({
-            message: this.toastMsgs
-                .toString()
-                .split(",")
-                .join("\n"),
-            duration: 3000
-        });
-        toast.present();
-        toast.onDidDismiss().then(() => {
-            this.toastMsgs = [];
-        });
     }
 }
