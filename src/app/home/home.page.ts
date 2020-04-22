@@ -1,12 +1,7 @@
-import {
-    Component, 
-    ɵCompiler_compileModuleSync__POST_R3__
-} from "@angular/core";
-import { Plugins, CameraResultType, CameraSource } from "@capacitor/core";
+import { Component } from "@angular/core";
 import { Platform } from "@ionic/angular";
 
 import Dynamsoft from "dynamsoft-javascript-barcode";
-import { timingSafeEqual } from "crypto";
 
 @Component({
     selector: "app-home",
