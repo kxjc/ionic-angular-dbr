@@ -1,5 +1,5 @@
 import {
-    Component,
+    Component, 
     ɵCompiler_compileModuleSync__POST_R3__
 } from "@angular/core";
 import { Plugins, CameraResultType, CameraSource } from "@capacitor/core";
@@ -16,6 +16,7 @@ import { timingSafeEqual } from "crypto";
 export class HomePage {
     private platform: Platform;
     public toastMsgs: any = [];
+    public barcodeResults: any = [];
 
     constructor(platform: Platform, public toastController: ToastController) {
         this.platform = platform;
@@ -24,27 +25,22 @@ export class HomePage {
     reader = null;
     scanner = null;
 
-    async readBarcodeFromImage() {
+    async readBarcodeFromImage(file) {
         try {
-            this.reader =
-                this.reader || (await Dynamsoft.BarcodeReader.createInstance());
-            const image = await Plugins.Camera.getPhoto({
-                quality: 100,
-                allowEditing: false,
-                resultType: CameraResultType.DataUrl,
-                source: CameraSource.Camera
-            });
-            let results = await this.reader.decode(image.dataUrl);
-            for (let result of results) {
-                this.sendToast(result.barcodeText);
+            this.barcodeResults = [];
+            this.reader = this.reader || (await Dynamsoft.BarcodeReader.createInstance());
+            let results = await this.reader.decode(file);
+            console.log(results.length)
+            if(results.length){
+                this.barcodeResults = results;
+            } else {
+                this.barcodeResults.push({barcodeText: "No barcodes found."})
             }
+
         } catch (ex) {
-            if (!ex.includes("User cancelled photos app")) {
-                alert(ex);
-            }
+            alert(ex);
         }
     }
-
     async readBarcodeFromVideo() {
         try {
             this.scanner =
