@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { Platform } from "@ionic/angular";
+import { Platform, LoadingController } from "@ionic/angular";
 
 import Dynamsoft from "dynamsoft-javascript-barcode";
 
@@ -14,7 +14,7 @@ export class HomePage {
     public barcodeResults: any = [];
     public videoResults: any = [];
 
-    constructor(platform: Platform) {
+    constructor(platform: Platform, public loadingController: LoadingController) {
         this.platform = platform; 
         this.initializeDBR();
     }
@@ -33,7 +33,9 @@ export class HomePage {
         try {
             this.barcodeResults = []; 
             this.videoResults = [];
+            this.presentLoading();
             let results = await this.reader.decode(file);
+            this.dismissLoading();
             if(results.length){
                 this.barcodeResults = results;
             } else {
@@ -63,5 +65,16 @@ export class HomePage {
         } catch (ex) {
             alert(ex);
         }
+    }
+
+    async presentLoading() {
+        const loading = await this.loadingController.create({
+            message: 'Decoding barcodes...'
+        });
+        await loading.present();
+    }
+
+    async dismissLoading() {
+       await this.loadingController.dismiss();
     }
 }
