@@ -33,6 +33,8 @@ export class HomePage {
         try {
             this.barcodeResults = []; 
             this.videoResults = [];
+            this.reader.getRuntimeSettings();
+            this.reader.updateRuntimeSettings('speed');
             this.presentLoading();
             let results = await this.reader.decode(file);
             this.dismissLoading();
